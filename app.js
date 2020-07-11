@@ -13,6 +13,6 @@ app.use(cors);
 
 app.use('/feed', feedRoutes);
 
-app.listen(3000, () => {
-    console.log('server started successfully on port 3000');
+app.listen(8080, () => {
+    console.log('server started successfully on port 8080');
 })
