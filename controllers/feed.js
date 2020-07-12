@@ -1,3 +1,5 @@
+const Post = require('../models/post');
+
 exports.getPosts = (req, res, next) => {
     res.status(200).json({
         posts: [{
@@ -10,17 +12,21 @@ exports.getPosts = (req, res, next) => {
 exports.createPost = (req, res, next) => {
     const title = req.body.title;
     const content = req.body.content;
-    res.status(201).json({
-        message: "Post Created Successfully!",
-        post: {
-            _id: 101,
-            title: title,
-            content: content,
-            creator: {
-                name: "rdx"
-            },
-            createdAt: new Date()
+    const imageUrl = req.body.imageUrl;
+    const creator = req.body.creator;
 
-        }
+    const post = new Post({
+        title: title,
+        content: content,
+        imageUrl: imageUrl,
+        creator: creator
     })
+    post.save()
+        .then(result => {
+            res.status(201).json({
+                message: 'Post Created Successfully',
+                post: result
+            })
+        })
+        .catch(err => console.log(err));
 }
