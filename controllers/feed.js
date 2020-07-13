@@ -38,11 +38,16 @@ exports.getPostByID = (req, res, next) => {
 }
 
 exports.createPost = (req, res, next) => {
+    if (!req.file) {
+        const error = new Error('No Image Provided!');
+        error.statusCode = 422;
+        throw error;
+    }
+
     const title = req.body.title;
     const content = req.body.content;
-    const imageUrl = req.body.imageUrl;
-    const creator = req.body.creator;
-
+    const imageUrl = req.file.path;
+    const creator = JSON.parse(req.body.creator);
     const post = new Post({
         title: title,
         content: content,
