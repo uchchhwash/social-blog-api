@@ -1,12 +1,40 @@
 const Post = require('../models/post');
 
 exports.getPosts = (req, res, next) => {
-    res.status(200).json({
-        posts: [{
-            title: "First Post",
-            content: "This is the first post"
-        }]
-    })
+    Post.find().then(post => {
+            if (!post) {
+                const error = new Error('No Post Available.');
+                error.statusCode = 404;
+                throw error;
+            }
+            res.status(200).json(post);
+        })
+        .catch(err => {
+            if (!err) {
+                err.statusCode = 500;
+            }
+            next(err);
+        });
+}
+
+
+
+exports.getPostByID = (req, res, next) => {
+    const postId = req.params.postId;
+    Post.findOne({ _id: postId }).then(post => {
+            if (!post) {
+                const error = new Error('Could not find post.');
+                error.statusCode = 404;
+                throw error;
+            }
+            res.status(200).json(post);
+        })
+        .catch(err => {
+            if (!err) {
+                err.statusCode = 500;
+            }
+            next(err);
+        });
 }
 
 exports.createPost = (req, res, next) => {
