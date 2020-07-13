@@ -28,5 +28,10 @@ exports.createPost = (req, res, next) => {
                 post: result
             })
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+            if (!err) {
+                err.statusCode = 500;
+            }
+            next(err);
+        });
 }
