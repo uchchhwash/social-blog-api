@@ -68,3 +68,38 @@ exports.createPost = (req, res, next) => {
             next(err);
         });
 }
+
+
+exports.updatePost = (req, res, next) => {
+    if (!req.file) {
+        const error = new Error('No Image Provided!');
+        error.statusCode = 422;
+        throw error;
+    }
+
+    const postId = req.params.postId;
+    const title = req.body.title;
+    const content = req.body.content;
+    const imageUrl = req.file.path;
+    const creator = JSON.parse(req.body.creator);
+
+    Post.findOne({ _id: postId }).then(post => {
+            if (!post) {
+                const error = new Error('Could not find post.');
+                error.statusCode = 404;
+                throw error;
+            }
+            post.title = title;
+            post.content = content;
+            post.imageUrl = imageUrl;
+            post.creator = creator;
+            return post.save();
+        })
+        .then((result => res.status(200).json({ message: "Post Updated", post })))
+        .catch(err => {
+            if (!err) {
+                err.statusCode = 500;
+            }
+            next(err);
+        });
+}
