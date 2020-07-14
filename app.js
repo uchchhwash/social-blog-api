@@ -2,7 +2,8 @@
 const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
-const multer = require('./utils/multer');
+const { multerHandler } = require('./utils/multer');
+
 //middleware
 const errorHandler = require('./middleware/errorHandler');
 const cors = require('./middleware/cors');
@@ -11,7 +12,7 @@ const feedRoutes = require('./routes/feed');
 
 const app = express();
 
-multer(app);
+multerHandler(app);
 app.use(bodyParser.json());
 
 

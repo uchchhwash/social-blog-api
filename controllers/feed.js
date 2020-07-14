@@ -1,3 +1,4 @@
+const { clearImage } = require('../utils/multer');
 const Post = require('../models/post');
 
 exports.getPosts = (req, res, next) => {
@@ -76,7 +77,7 @@ exports.updatePost = (req, res, next) => {
         error.statusCode = 422;
         throw error;
     }
-
+    let updatedPost;
     const postId = req.params.postId;
     const title = req.body.title;
     const content = req.body.content;
@@ -89,13 +90,17 @@ exports.updatePost = (req, res, next) => {
                 error.statusCode = 404;
                 throw error;
             }
+            if (imageUrl !== post.imageUrl) {
+                clearImage(post.imageUrl);
+            }
             post.title = title;
             post.content = content;
             post.imageUrl = imageUrl;
             post.creator = creator;
+            updatedPost = post;
             return post.save();
         })
-        .then((result => res.status(200).json({ message: "Post Updated", post })))
+        .then(result => res.status(200).json({ message: "Post Updated", updatedPost }))
         .catch(err => {
             if (!err) {
                 err.statusCode = 500;

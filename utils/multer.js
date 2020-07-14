@@ -1,6 +1,8 @@
 const multer = require('multer');
+const fs = require('fs');
+const path = require('path');
 
-module.exports = (app) => {
+module.exports.multerHandler = (app) => {
     const fileStorage = multer.diskStorage({
         destination: (req, file, cb) => {
             cb(null, 'images');
@@ -21,4 +23,9 @@ module.exports = (app) => {
     }
 
     app.use(multer({ storage: fileStorage, fileFilter: fileFilter }).single('image'));
+}
+
+module.exports.clearImage = (filePath) => {
+    filePath = path.join(__dirname, '..', filePath);
+    fs.unlink(filePath, err => console.log(err));
 }
