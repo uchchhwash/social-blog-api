@@ -9,6 +9,7 @@ const errorHandler = require('./middleware/errorHandler');
 const cors = require('./middleware/cors');
 //routes
 const feedRoutes = require('./routes/feed');
+const feedRoutes = require('./routes/auth');
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use(cors);
 
 
 app.use('/feed', feedRoutes);
+app.use('/auth', authRoutes);
 
 
 require('./startup/db')();
