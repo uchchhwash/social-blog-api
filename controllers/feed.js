@@ -2,13 +2,25 @@ const { clearImage } = require('../utils/multer');
 const Post = require('../models/post');
 
 exports.getPosts = (req, res, next) => {
-    Post.find().then(post => {
-            if (!post) {
+
+    const currentPage = req.query.page || 1;
+    const perPage = 5;
+    let totalItems;
+    Post.find()
+        .countDocuments()
+        .then(count => {
+            totalItems = count;
+            return Post.find()
+                .skip((currentPage - 1) * perPage)
+                .limit(perPage);
+        })
+        .then(posts => {
+            if (!posts) {
                 const error = new Error('No Post Available.');
                 error.statusCode = 404;
                 throw error;
             }
-            res.status(200).json(post);
+            res.status(200).json({ posts, totalItems });
         })
         .catch(err => {
             if (!err) {
