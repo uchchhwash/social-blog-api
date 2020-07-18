@@ -13,15 +13,11 @@ const authRoutes = require('./routes/auth');
 
 const app = express();
 
+require("./startup/config")();
 multerHandler(app);
 app.use(bodyParser.json());
-
-
 app.use('/images', express.static(path.join(__dirname, 'images')));
-
-
 app.use(cors);
-
 
 app.use('/feed', feedRoutes);
 app.use('/auth', authRoutes);
