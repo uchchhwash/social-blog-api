@@ -35,9 +35,9 @@ exports.userValidator = [body('email')
     .isLength({ min: 5 }),
     body('name').trim().not().isEmpty(),
     (req, res, next) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            const error = new Error('Validation Failed, Entered data is incorrect!')
+        const err = validationResult(req);
+        if (!err.isEmpty()) {
+            const error = new Error(err.errors[0].msg)
             error.statusCode = 422;
             throw error;
             //return res.status(422).json({ errors: errors.array() });

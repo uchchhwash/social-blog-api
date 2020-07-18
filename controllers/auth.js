@@ -1,6 +1,7 @@
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const config = require("config");
 
 exports.signup = (req, res, next) => {
     const email = req.body.email;
@@ -35,10 +36,10 @@ exports.login = (req, res, next) => {
                 const error = new Error('A user with this email could not be found');
                 error.statusCode = 401;
                 throw error;
-
-                loadedUser = user;
-                return bcrypt.compare(password, user.password);
             }
+
+            loadedUser = user;
+            return bcrypt.compare(password, user.password);
         })
         .then(isEqual => {
             if (!isEqual) {
@@ -49,7 +50,8 @@ exports.login = (req, res, next) => {
             const token = jwt.sign({
                 email: loadedUser.email,
                 userId: loadedUser._id.toString()
-            })
+            }, config.get("jwtPrivateKey"), { expiresIn: '1h' });
+            res.status(200).json({ token: token, userId: loadedUser._id.toString() })
         })
         .catch(err => {
             if (!err.statusCode) {
