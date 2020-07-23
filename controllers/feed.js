@@ -152,7 +152,14 @@ exports.deletePost = (req, res, next) => {
                 throw error;
             }
             clearImage(post.imageUrl);
-            post.deleteOne();
+            return Post.findByIdAndRemove(postId);
+        })
+        .then(result => {
+            return User.findById(req.userId);
+        })
+        .then(user => {
+            user.posts.pull(postId);
+            return user.save();
         })
         .then(result => res.status(200).json({ message: "Post Deleted", postId }))
         .catch(err => {
