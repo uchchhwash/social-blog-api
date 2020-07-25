@@ -23,22 +23,22 @@ exports.getPosts = async(req, res, next) => {
 
 
 
-exports.getPostByID = (req, res, next) => {
+exports.getPostByID = async(req, res, next) => {
     const postId = req.params.postId;
-    Post.findOne({ _id: postId }).then(post => {
-            if (!post) {
-                const error = new Error('Could not find post.');
-                error.statusCode = 404;
-                throw error;
-            }
-            res.status(200).json(post);
-        })
-        .catch(err => {
-            if (!err) {
-                err.statusCode = 500;
-            }
-            next(err);
-        });
+    try {
+        const post = await Post.findOne({ _id: postId })
+        if (!post) {
+            const error = new Error('Could not find post.');
+            error.statusCode = 404;
+            throw error;
+        }
+        res.status(200).json(post);
+    } catch (error) {
+        if (!err) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
 }
 
 exports.createPost = (req, res, next) => {
